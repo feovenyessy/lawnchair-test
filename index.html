@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edocs Storage test</title>
+    <script src="js/Lawnchair.js"></script>
+	<script src="js/adapters/dom.js"></script>
+    <script src="js/jquery.js"></script>
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript">
+	
+	var viewData = new Lawnchair({name:'testing'});
+	
+	function save() {
+		var me = [{"name":"ie7","y":12.8},{"name":"ie9","y":19.8},{"name":"opera","y":7.4},{"name":"firefox","y":17.4},{"name":"firefox3","y":10.6}];
+		viewData.save({key:'data',tomb:me}, function(obj){
+			console.log('saving data');
+			console.log(obj);
+			$('#output').html(me.length + ' item saved');
+		});
+	}
+	
+	function cleardata() {
+		$('#output').html('removing data');
+		viewData.remove('data', function(me){
+			$('#output').html('removed.');
+		});
+	}
+	
+	function info() {
+		viewData.get('data', function(me) {
+			$('#output').html('loading data');
+			if (typeof(me) != "undefined") {
+				if (me!=null) {
+					if (typeof(me.tomb) != "undefined") {
+						var output = me.tomb.length + ' item exist(s) in array:<br>';
+						for (var i=0;i<me.tomb.length;i++) {
+								output += "Name: " + me.tomb[i].name + "; yes: " + me.tomb[i].y + "<br>";
+							}
+						$('#output').html(output);
+					} else {
+						$('#output').html('Storage is empty.');
+					}
+				} else {
+					$('#output').html('No data in storage.');
+				}
+			} else {
+				$('#output').html('No data in storage.');
+			}
+			
+		});   
+	}
+	
+	function finder() {
+		viewData.each(function(r){
+			r.tomb.find('"name"=="opera"',function(r){
+				$('#output').html(r);
+			});
+		});
+	}
+	</script>
+
+	
+        <script type="text/javascript">
+           
+		   	function init() {
+				document.addEventListener('deviceready',start_examples,false);
+			}
+		   
+           function start_examples() {
+							
+			}
+
+
+             
+
+        </script>
+	
+</head>
+<body onload="init()">
+<h1>Lawnchair storage test</h1>
+<br />
+<input type="button" value="info" onclick="info()" />
+<input type="button" value="save" onclick="save()" />
+<input type="button" value="clear" onclick="cleardata()" />
+<input type="button" value="find" onclick="finder()" /><br />
+<h3>results:</h3>
+<div id="output">Results</div>
+</body>
+</html>
